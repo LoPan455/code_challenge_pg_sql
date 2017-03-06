@@ -44,15 +44,12 @@ app.post('/treats',function(req,res){
   console.log('app.post to /treats reached');
   var newTreat = req.body;
   console.log('newTreat is: ',newTreat);
-
   pool.connect(function(errorConnectingToDatabase, client, done){
     if(errorConnectingToDatabase) {
       // There was an error connecting to the database
       console.log('Error connecting to database: ', errorConnectingToDatabase);
       res.sendStatus(500);
     } else {
-      // We connected to the database!!!
-      // Now, we're gonna' git stuff!!!!!
       client.query('INSERT INTO treats (name,description,pic) VALUES ($1,$2,$3);',
       [newTreat.name,newTreat.description,newTreat.url],
       function(errorMakingQuery, result){
@@ -61,7 +58,8 @@ app.post('/treats',function(req,res){
           console.log('Error making the database query: ', errorMakingQuery);
           res.sendStatus(500);
         } else {
-          res.send(result.rows);
+          console.log(result.rows);
+          res.status(200).send(result.rows);
         }
       });
     }
