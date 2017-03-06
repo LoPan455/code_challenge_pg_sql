@@ -13,8 +13,14 @@ var config = {
 
 /*** Build out a module to manage our treats requests. ***/
 
-app.get('/getTreats',function(){
-  console.log('app.get to / reached');
+app.get('/treats',function(req,res){
+  console.log('app.get to /treats reached');
+  res.sendStatus(200);
+}) // app.get to /getTreats
+
+app.post('/treats',function(req,res){
+  console.log('app.post to /treats reached');
+  res.sendStatus(200);
 })
 
 
