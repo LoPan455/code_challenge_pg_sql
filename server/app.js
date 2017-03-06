@@ -2,10 +2,20 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var port = process.env.PORT || 3000;
+var pg = require('pg');
+var config = {
+  database: 'phi', // the name of the database
+  host: 'localhost', // where is your database
+  port: 5432, // the port number for your database
+  max: 10, // how many connections at one time
+  idleTimeoutMillis: 30000 // 30 seconds to try to connect
+};
 
 /*** Build out a module to manage our treats requests. ***/
 
-
+app.get('/getTreats',function(){
+  console.log('app.get to / reached');
+})
 
 
 // Get static files
