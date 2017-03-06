@@ -11,7 +11,10 @@ var config = {
   idleTimeoutMillis: 30000 // 30 seconds to try to connect
 };
 var pool = new pg.Pool(config);
-var bodyParser = require ('body-parser')
+var bodyParser = require ('body-parser');
+
+// use body-parser
+app.use(bodyParser.urlencoded({extended: true}));
 
 
 /*** Build out a module to manage our treats requests. ***/
@@ -39,16 +42,35 @@ app.get('/treats',function(req,res){
 
 app.post('/treats',function(req,res){
   console.log('app.post to /treats reached');
-  res.sendStatus(200);
-}) // end app.post to /treats
+  var newTreat = req.body;
+  console.log('newTreat is: ',newTreat);
 
+  pool.connect(function(errorConnectingToDatabase, client, done){
+    if(errorConnectingToDatabase) {
+      // There was an error connecting to the database
+      console.log('Error connecting to database: ', errorConnectingToDatabase);
+      res.sendStatus(500);
+    } else {
+      // We connected to the database!!!
+      // Now, we're gonna' git stuff!!!!!
+      client.query('INSERT INTO treats (name,description,pic) VALUES ($1,$2,$3);',
+      [newTreat.name,newTreat.description,newTreat.url],
+      function(errorMakingQuery, result){
+        done();
+        if(errorMakingQuery) {
+          console.log('Error making the database query: ', errorMakingQuery);
+          res.sendStatus(500);
+        } else {
+          res.send(result.rows);
+        }
+      });
+    }
+  });
+
+});
 
 // Get static files
 app.use(express.static('./server/public'));
-
-// use body-parser
-
-app.use(bodyParser.urlencoded({extended: true}));
 
 // Get index.html
 app.get('/', function(req, res) {
